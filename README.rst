@@ -26,6 +26,7 @@ Go to the Credentials for your project and create New credentials > OAuth client
 2) Be sure that you have set environment variables with path to client_secrets.json file (by default ./):
 Set a path where pyspreadsheet will store Google Credentials (by default ./)
 
+
 ::
 
     export GOOGLE_CLIENT_SECRET_PATH="./"
