@@ -19,6 +19,7 @@ Open a terminal and install pyspreadsheet package
 ''''''
 
 1) Find a client_secrets.json file
+
 Log into the Google Developers Console with the Google account whose spreadsheets you want to access. Create (or select) a project and enable the Drive API and Sheets API (under Google Apps APIs).
 Go to the Credentials for your project and create New credentials > OAuth client ID > of type Other. In the list of your OAuth 2.0 client IDs click Download JSON for the Client ID you just created. Save the file as client_secrets.json.
 
