@@ -55,7 +55,7 @@ Go to the Credentials for your project and create New credentials > OAuth client
 
 2) Import from Redshift to Google Sheets
 ''''''''''''''''''''''''''''''''''''''''
-pyspreadsheet has a function to export result of a Amazon Redshift query to a Google Sheet. This use `pyred <https://github.com/dacker-team/pyred/>`_
+pyspreadsheet has a function to export result of a Amazon Redshift query to a Google Sheet. This use `pyred <https://github.com/dacker-team/pyred/>`_.
 Simply write:
 
 
