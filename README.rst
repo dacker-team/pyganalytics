@@ -52,3 +52,15 @@ Go to the Credentials for your project and create New credentials > OAuth client
     pyspreadsheet.send_to_sheet(sheet_id, data)
 
 - pyspreadsheet will warn you if it has to overwrite some data, except if first row (column_name) are the same than column_name you want to send
+
+2) Import from Redshift to Google Sheets
+''''''''''''''''''''''''''''''''''''''''
+pyspreadsheet has a function to export result of a Amazon Redshift query to a Google Sheet. This use [pyred](https://github.com/dacker-team/pyred)
+Simply write:
+
+
+.. code:: python
+
+    import pyspreadsheet
+    pyspreadsheet.redshift.query_to_sheet(sheet_id, worksheet_name, instance, query)
+
