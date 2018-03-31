@@ -1,6 +1,6 @@
 import argparse
 import os
-# Path to get client_secret.json and to store credentials
+# Path to get client_secrets.json and to store credentials
 import httplib2
 from googleapiclient.discovery import build
 from oauth2client import client, file
