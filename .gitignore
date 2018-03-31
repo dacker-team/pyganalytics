@@ -2,7 +2,7 @@ venv/
 .idea/
 build/
 dist/
-pyred.egg-info/
+pyspreadsheet.egg-info/
 *pyc
 sandbox.py
 sandbox.json

@@ -2,7 +2,6 @@ import argparse
 import os
 # Path to get client_secret.json and to store credentials
 import httplib2
-# import pygsheets as pygsheets
 from googleapiclient.discovery import build
 from oauth2client import client, file
 from oauth2client import tools
@@ -23,16 +22,6 @@ if GOOGLE_CREDENTIALS_PATH[-1] == '/':
     GOOGLE_CREDENTIALS_PATH = GOOGLE_CREDENTIALS_PATH[:-1]
 
 GOOGLE_CLIENT_SECRET_PATH = GOOGLE_CLIENT_SECRET_PATH + '/client_secrets.json'
-
-
-# def get_authenticated_account():
-#     oauth_creds_store = GOOGLE_CREDENTIALS_PATH
-#     path = GOOGLE_CLIENT_SECRET_PATH
-#     account = pygsheets.authorize(
-#         outh_file=path,
-#         outh_nonlocal=True,
-#         outh_creds_store=oauth_creds_store)
-#     return account
 
 
 def get_api_account(version='v4'):
