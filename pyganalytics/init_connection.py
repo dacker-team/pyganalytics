@@ -1,6 +1,5 @@
 import argparse
 import os
-# Path to get client_secrets.json and to store credentials
 import httplib2
 from googleapiclient.discovery import build
 from oauth2client import client, file
@@ -24,9 +23,9 @@ if GOOGLE_CREDENTIALS_PATH[-1] == '/':
 GOOGLE_CLIENT_SECRET_PATH = GOOGLE_CLIENT_SECRET_PATH + '/client_secrets.json'
 
 
-def get_api_account(version='v4'):
-    scopes = ['https://www.googleapis.com/auth/spreadsheets']
-    discovery_uri = 'https://sheets.googleapis.com/$discovery/rest'
+def initialize_api(version='v4'):
+    scopes = ['https://www.googleapis.com/auth/analytics.readonly']
+    discovery_uri = 'https://analyticsreporting.googleapis.com/$discovery/rest'
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         parents=[tools.argparser])
@@ -38,7 +37,7 @@ def get_api_account(version='v4'):
         scope=scopes,
         message=tools.message_if_missing(GOOGLE_CLIENT_SECRET_PATH))
 
-    path_storage = GOOGLE_CREDENTIALS_PATH + "spreadsheet.json"
+    path_storage = GOOGLE_CREDENTIALS_PATH + "analytics.json"
     storage = file.Storage(path_storage)
     credentials = storage.get()
     if credentials is None or credentials.invalid:
@@ -51,4 +50,4 @@ def get_api_account(version='v4'):
     else:
         account = build('analytics', version, http=http, discoveryServiceUrl=discovery_uri)
 
-    return account.spreadsheets()
+    return account

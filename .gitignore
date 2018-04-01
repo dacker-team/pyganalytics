@@ -2,7 +2,7 @@ venv/
 .idea/
 build/
 dist/
-pyspreadsheet.egg-info/
+pyganalytics.egg-info/
 *pyc
 sandbox.py
 sandbox.json
