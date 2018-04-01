@@ -1,9 +1,17 @@
+import json
+
 from pyganalytics.api import get_report
 from pyganalytics.extract import extract_api_data
 from .init_connection import initialize_api
 from .mapping import mapping
 import hashlib
+import os
 
+google_analytics_mapping_path = os.environ.get("GOOGLE_ANALYTICS_MAPPING_PATH")
+if google_analytics_mapping_path:
+    custom_mapping = open(google_analytics_mapping_path).read()
+    custom_mapping = json.loads(custom_mapping)
+    mapping.update(custom_mapping)
 mapping_reverse = {}
 for x in mapping.keys():
     mapping_reverse[mapping[x]] = x

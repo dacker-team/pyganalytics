@@ -37,7 +37,7 @@ def initialize_api(version='v4'):
         scope=scopes,
         message=tools.message_if_missing(GOOGLE_CLIENT_SECRET_PATH))
 
-    path_storage = GOOGLE_CREDENTIALS_PATH + "analytics.json"
+    path_storage = GOOGLE_CREDENTIALS_PATH + "/analytics.json"
     storage = file.Storage(path_storage)
     credentials = storage.get()
     if credentials is None or credentials.invalid:

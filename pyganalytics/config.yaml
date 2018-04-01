@@ -13,5 +13,5 @@ traffic:
     operator: 'GREATER_THAN'
     comparisonValue: '100'
   time_increment:
-  - ga:week
+  - week
   - day
