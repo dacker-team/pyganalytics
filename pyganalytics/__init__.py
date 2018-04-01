@@ -1,1 +1,2 @@
+from .analytics import get
 

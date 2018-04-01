@@ -10,7 +10,7 @@ with open('LICENSE') as f:
 
 setup(
     name='pyganalytics',
-    version='0.0.2',
+    version='0.0.3',
     description='Easily get data from Google Analytics',
     long_description=readme,
     author='Dacker',
