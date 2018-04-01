@@ -31,7 +31,7 @@ def get_start_end(start, end):
 def get_all_view_id(test, all_view_id):
     if (not all_view_id) and test:
         all_view_id = get_all_access_view()
-        all_view_id = [ai["view_id"] for ai in all_view_id][0]
+        all_view_id = [ai["view_id"] for ai in all_view_id][:1]
     elif all_view_id == "*":
         all_view_id = get_all_access_view()
         all_view_id = [ai["view_id"] for ai in all_view_id]

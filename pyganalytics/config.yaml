@@ -4,7 +4,6 @@ traffic:
   - ga:users
   - ga:pageviews
   - ga:avgSessionDuration
-  - ga:newUsers
   - ga:percentNewSessions
   - ga:bounces
   dimension:
@@ -14,4 +13,5 @@ traffic:
     operator: 'GREATER_THAN'
     comparisonValue: '100'
   time_increment:
+  - ga:week
   - day

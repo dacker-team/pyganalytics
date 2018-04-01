@@ -11,6 +11,6 @@ def to_redshift(result, all_batch_id, redshift_instance):
             pyred.execute.execute_query('MH', query)
         except psycopg2.ProgrammingError:
             pass
-
+    result["columns_name"] = [r.replace(":", "_") for r in result["columns_name"]]
     pyred.send_to_redshift(redshift_instance, result, replace=False)
     return 0
