@@ -1,9 +1,8 @@
 from . import init_connection
 
-analytics = init_connection.initialize_api('v3')
 
-
-def get_all_access_view(only_account=False):
+def get_all_access_view(project, only_account=False):
+    analytics = init_connection.initialize_api(project, 'v3')
     accounts = analytics.management().accounts().list().execute()
     all_view = []
     if only_account:

@@ -1,20 +1,8 @@
-import json
-
 from pyganalytics.api import get_report
 from pyganalytics.extract import extract_api_data
+from pyganalytics.path import mapping_path
 from .init_connection import initialize_api
-from .mapping import mapping
 import hashlib
-import os
-
-google_analytics_mapping_path = os.environ.get("GOOGLE_ANALYTICS_MAPPING_PATH")
-if google_analytics_mapping_path:
-    custom_mapping = open(google_analytics_mapping_path).read()
-    custom_mapping = json.loads(custom_mapping)
-    mapping.update(custom_mapping)
-mapping_reverse = {}
-for x in mapping.keys():
-    mapping_reverse[mapping[x]] = x
 
 
 def create_id(view_id, date):
@@ -42,12 +30,14 @@ def treat_data(data, metric, dimension):
     return data
 
 
-def get_data(view_id, start, end, metric, dimension, time_increment, metric_filter=None, dimension_filter=None):
+def get_data(project, view_id, start, end, metric, dimension, time_increment, metric_filter=None,
+             dimension_filter=None):
+    mapping_reverse = mapping_path(project)[1]
     try:
         dimension.append(mapping_reverse[time_increment])
     except KeyError:
         dimension.append(time_increment)
-    analytics = initialize_api()
+    analytics = initialize_api(project)
 
     if metric_filter is not None:
         metric_filter = [
@@ -69,7 +59,8 @@ def get_data(view_id, start, end, metric, dimension, time_increment, metric_filt
     return data
 
 
-def create_columns_rows(data, view_id, time_increment):
+def create_columns_rows(project, data, view_id, time_increment):
+    mapping = mapping_path(project)[0]
     try:
         column_set = data[0].keys()
     except IndexError:
