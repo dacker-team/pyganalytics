@@ -30,6 +30,7 @@ def get_metric_dimension(project, test):
         metric_dimension = yaml.load(stream)
     return metric_dimension
 
+
 def credential_path(project):
     google_client_secret_path = os.environ.get("GOOGLE_%s_CLIENT_SECRET_PATH" % project)
     google_credentials_path = os.environ.get("GOOGLE_%s_CREDENTIALS_PATH" % project)
