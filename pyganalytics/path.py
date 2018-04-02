@@ -22,14 +22,13 @@ def mapping_path(project):
 def get_metric_dimension(project, test):
     google_analytics_yaml_path = os.environ.get("GOOGLE_ANALYTICS_%s_YAML_PATH" % project)
     if test and not google_analytics_yaml_path:
-        google_analytics_yaml_path = metric_dimension_example
+        return metric_dimension_example
     elif not google_analytics_yaml_path:
         print("No GOOGLE_ANALYTICS_YAML_PATH configured")
         exit()
     with open(google_analytics_yaml_path, 'r') as stream:
         metric_dimension = yaml.load(stream)
     return metric_dimension
-
 
 def credential_path(project):
     google_client_secret_path = os.environ.get("GOOGLE_%s_CLIENT_SECRET_PATH" % project)
