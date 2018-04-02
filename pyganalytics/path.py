@@ -3,8 +3,8 @@ import os
 
 import yaml
 
-import pyganalytics
-from pyganalytics.mapping import mapping
+from .metric_dim_example import metric_dimension_example
+from .mapping import mapping
 
 
 def mapping_path(project):
@@ -22,7 +22,7 @@ def mapping_path(project):
 def get_metric_dimension(project, test):
     google_analytics_yaml_path = os.environ.get("GOOGLE_ANALYTICS_%s_YAML_PATH" % project)
     if test and not google_analytics_yaml_path:
-        google_analytics_yaml_path = os.path.join(os.path.dirname(pyganalytics.__file__), "config.yaml")
+        google_analytics_yaml_path = metric_dimension_example
     elif not google_analytics_yaml_path:
         print("No GOOGLE_ANALYTICS_YAML_PATH configured")
         exit()
