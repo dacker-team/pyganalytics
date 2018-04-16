@@ -45,7 +45,8 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
 
     if redshift_instance:  # Send to Redshift
         result["table_name"] = output_storage_name
-        to_redshift(result, all_batch_id, redshift_instance)
+        copy_result = result.copy()
+        to_redshift(copy_result, all_batch_id, redshift_instance)
         print("Finished sent to Redshift " + report_name + " " + time_increment + " between " + start + " and " + end)
     if spreadsheet_id:  # Prepare to send to spreadsheet
         result["worksheet_name"] = output_storage_name
