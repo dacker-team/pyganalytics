@@ -2,6 +2,11 @@
 
 from setuptools import setup, find_packages
 
+from pip.req import parse_requirements
+
+reqs = parse_requirements("requirements.txt", session='hack')
+reqs = [str(ir.req) for ir in reqs]
+
 with open('README.rst') as f:
     readme = f.read()
 
@@ -20,5 +25,6 @@ setup(
     keywords='get data google analytics easy',
     packages=find_packages(exclude=('tests', 'docs')),
     python_requires='>=3',
+    install_requires=reqs,
 
 )

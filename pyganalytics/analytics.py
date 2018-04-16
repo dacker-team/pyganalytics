@@ -76,7 +76,7 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
                 time.sleep(2)
         # Send to spreadsheet
         if spreadsheet_id:
-            pyspreadsheet.send_to_sheet(spreadsheet_id, result)
+            pyspreadsheet.send_to_sheet(project, spreadsheet_id, result)
             print("Finished sent to Spreadsheet " + report_name +
                   " " + time_increment + " between " + start + " and " + end)
         all_result.append(result)
