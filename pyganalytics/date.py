@@ -28,6 +28,23 @@ def segment_month_date(start, end):
     return result
 
 
+def segment_5d_date(start, end):
+    """
+    start : YYYY-MM-DD
+    end : YYYY-MM-DD
+    """
+    start_datetime = string_to_date(start)
+    end_datetime = string_to_date(end)
+    result = []
+
+    while (start_datetime + timedelta(days=5)) < end_datetime:
+        inter = [date_to_string(start_datetime), date_to_string(start_datetime + timedelta(days=5))]
+        result.append(inter)
+        start_datetime = start_datetime + timedelta(days=6)
+    result.append([date_to_string(start_datetime), date_to_string(end_datetime)])
+    return result
+
+
 def add_a_month(date):
     try:
         next_month = date.replace(month=date.month + 1, day=1)

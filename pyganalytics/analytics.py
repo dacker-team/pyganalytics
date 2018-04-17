@@ -7,7 +7,7 @@ from .redshift import to_redshift
 from .config import get_start_end, get_all_view_id
 from pyganalytics.path import get_metric_dimension
 from .core import get_data, create_columns_rows
-from .date import segment_month_date
+from .date import segment_month_date, segment_5d_date
 
 
 def _get_one_segment(project, report, all_view_id, start, end, time_increment, redshift_instance, spreadsheet_id):
@@ -65,7 +65,10 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
             result = _get_one_segment(project, report, all_view_id, start, end, time_increment,
                                       redshift_instance, spreadsheet_id)
         else:
-            segments = segment_month_date(start, end)
+            if time_increment == 'day':
+                segments = segment_5d_date(start, end)
+            else:
+                segments = segment_month_date(start, end)
             i = 0
             for segment in segments:
                 segment_data = _get_one_segment(project, report, all_view_id, segment[0], segment[1], time_increment,
