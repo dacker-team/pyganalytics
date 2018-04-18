@@ -8,7 +8,7 @@ def to_redshift(data, all_batch_id, redshift_instance):
     if all_batch_id:
         try:
             query = 'DELETE FROM ' + redshift_table + ' WHERE batch_id IN ' + "(" + ",".join(all_batch_id) + ")"
-            pyred.execute.execute_query('MH', query)
+            pyred.execute.execute_query(redshift_instance, query)
         except psycopg2.ProgrammingError:
             pass
     data["columns_name"] = [r.replace(":", "_") for r in data["columns_name"]]
