@@ -1,3 +1,5 @@
+import copy
+
 from pyganalytics.api import get_report
 from pyganalytics.extract import extract_api_data
 from pyganalytics.path import mapping_path
@@ -32,7 +34,9 @@ def treat_data(data, metric, dimension):
 
 def get_data(project, view_id, start, end, metric, dimension, time_increment, metric_filter=None,
              dimension_filter=None):
+    print(view_id)
     mapping_reverse = mapping_path(project)[1]
+    dimension = copy.deepcopy(dimension)
     try:
         dimension.append(mapping_reverse[time_increment])
     except KeyError:

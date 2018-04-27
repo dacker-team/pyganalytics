@@ -9,7 +9,7 @@ psycopg2-binary==2.7.4
 pyasn1==0.4.2
 pyasn1-modules==0.2.1
 pyred==0.1.2
-pyspreadsheet==0.0.11
+pyspreadsheet==0.0.15
 python-dateutil==2.7.2
 pytz==2018.3
 PyYAML==3.12
