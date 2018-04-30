@@ -27,5 +27,5 @@ mapping = {
     "ga:pagePath": 'page_path',
     "ga:pageTitle": 'page_title',
     "ga:country": 'country',
-    "ga:week": "week"
+    "ga:isoYearIsoWeek": "week"
 }

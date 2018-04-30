@@ -5,6 +5,7 @@ from pyganalytics.extract import extract_api_data
 from pyganalytics.path import mapping_path
 from .init_connection import initialize_api
 import hashlib
+from isoweek import Week
 
 
 def create_id(view_id, date):
@@ -24,9 +25,14 @@ def treat_data(data, metric, dimension):
             i[j] = float(i[j])
         for d in dimension:
             if d == "ga:yearMonth":
-                i[d] = i[d][:4] + "-" + i[d][-2:] + "-01"
+                i["date"] = i[d][:4] + "-" + i[d][-2:] + "-01"
             elif d == "ga:year":
-                i[d] = i[d] + "-01-01"
+                i["date"] = i[d] + "-01-01"
+            elif d == "ga:isoYearIsoWeek":
+                week = Week(int(i[d][:4]), int(i[d][-2:])).monday()
+                i["date"] = str(week)[:10]
+            elif d == "ga:date":
+                i["date"] = i[d][:4] + "-" + i[d][4:6] + "-" + i[d][6:8]
             if len(i[d]) > 254:
                 i[d] = i[d][:254]
     return data
