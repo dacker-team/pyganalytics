@@ -64,8 +64,19 @@ def get_data(project, view_id, start, end, metric, dimension, time_increment, me
     response = get_report(analytics, view_id, dimension, metric, start, end, metric_filter=metric_filter,
                           dimension_filter=dimension_filter)
 
-    data = treat_data(extract_api_data(response), metric, dimension)
+    next_page_token = response['reports'][0].get("nextPageToken")
 
+    api_data = extract_api_data(response)
+    data = treat_data(api_data, metric, dimension)
+
+    while next_page_token is not None:
+        response = get_report(analytics, view_id, dimension, metric, start, end, metric_filter=metric_filter,
+                              dimension_filter=dimension_filter, page_token=next_page_token)
+
+        next_page_token = response['reports'][0].get("nextPageToken")
+
+        api_data = extract_api_data(response)
+        data = data + treat_data(api_data, metric, dimension)
     return data
 
 
