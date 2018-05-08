@@ -28,7 +28,7 @@ def segment_month_date(start, end):
     return result
 
 
-def segment_5d_date(start, end):
+def segment_ndays_date(start, end, increment):
     """
     start : YYYY-MM-DD
     end : YYYY-MM-DD
@@ -37,10 +37,10 @@ def segment_5d_date(start, end):
     end_datetime = string_to_date(end)
     result = []
 
-    while (start_datetime + timedelta(days=5)) < end_datetime:
-        inter = [date_to_string(start_datetime), date_to_string(start_datetime + timedelta(days=5))]
+    while (start_datetime + timedelta(days=increment)) < end_datetime:
+        inter = [date_to_string(start_datetime), date_to_string(start_datetime + timedelta(days=increment))]
         result.append(inter)
-        start_datetime = start_datetime + timedelta(days=6)
+        start_datetime = start_datetime + timedelta(days=increment + 1)
     result.append([date_to_string(start_datetime), date_to_string(end_datetime)])
     return result
 

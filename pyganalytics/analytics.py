@@ -7,7 +7,7 @@ from .redshift import to_redshift
 from .config import get_start_end, get_all_view_id
 from pyganalytics.path import get_metric_dimension
 from .core import get_data, create_columns_rows
-from .date import segment_month_date, segment_5d_date
+from .date import segment_month_date, segment_ndays_date
 
 
 def _get_one_segment(project, report, all_view_id, start, end, time_increment, redshift_instance, spreadsheet_id):
@@ -25,6 +25,7 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
     all_batch_id = []
     print("Loading " + report_name + " " + time_increment + " between " + start + " and " + end)
     for view_id in all_view_id:
+
         data = get_data(
             project,
             view_id,
@@ -37,8 +38,10 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
             dimension_filter)
 
         view_result, view_all_batch_id = create_columns_rows(project, data, view_id, time_increment)
-        result["columns_name"] = view_result["columns_name"]
-        result["rows"] = result["rows"] + view_result["rows"]
+        if result.get("columns_name") is None or (len(view_result["columns_name"]) > len(result["columns_name"])):
+            result["columns_name"] = view_result["columns_name"]
+        if len(view_result["rows"]) > 0 and len(view_result["rows"][0]) > 2:
+            result["rows"] = result["rows"] + view_result["rows"]
         all_batch_id = all_batch_id + view_all_batch_id
 
     len_result = str(len(result["rows"]))
@@ -55,7 +58,7 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
     return result
 
 
-def _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id):
+def _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id, increment):
     report_name = report.get("name")
 
     all_time_increment = report.get("config")["time_increment"]
@@ -66,7 +69,7 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
                                       redshift_instance, spreadsheet_id)
         else:
             if time_increment == 'day':
-                segments = segment_5d_date(start, end)
+                segments = segment_ndays_date(start, end, increment)
             else:
                 segments = segment_month_date(start, end)
             i = 0
@@ -88,7 +91,8 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
     return all_result
 
 
-def get(project, test=False, start=None, end=None, all_view_id=None, spreadsheet_id=None, redshift_instance=None):
+def get(project, test=False, start=None, end=None, all_view_id=None, spreadsheet_id=None, redshift_instance=None,
+        increment=5):
     """
     :param test: if test = True --> other params are set up automatically
     :param start: "yyyy-mm-dd"
@@ -112,7 +116,8 @@ def get(project, test=False, start=None, end=None, all_view_id=None, spreadsheet
             "config": metric_dimension[report_name]
         }
         print("Loading report %s" % report_name)
-        all_result = _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id)
+        all_result = _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id,
+                                          increment)
         print("Finish loading report %s" % report_name)
         if spreadsheet_id is None and redshift_instance is None:
             print(all_result)
