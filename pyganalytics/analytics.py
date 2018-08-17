@@ -3,6 +3,7 @@ import time
 import pyspreadsheet
 import copy
 
+from pyganalytics.azure import to_azure
 from .redshift import to_redshift
 from .config import get_start_end, get_all_view_id
 from pyganalytics.path import get_metric_dimension
@@ -10,7 +11,8 @@ from .core import get_data, create_columns_rows
 from .date import segment_month_date, segment_ndays_date
 
 
-def _get_one_segment(project, report, all_view_id, start, end, time_increment, redshift_instance, spreadsheet_id):
+def _get_one_segment(project, report, all_view_id, start, end, time_increment, redshift_instance, spreadsheet_id,
+                     azure_instance, prefix_schema):
     report_name = report.get("name")
     report_config = report.get("config")
     metric = list(report_config["metric"])
@@ -18,6 +20,8 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
     metric_filter = report_config.get("metric_filter")
     dimension_filter = report_config.get("dimension_filter")
     output_storage_name = "ga." + report_name + "_" + time_increment.replace(":", "_")
+    if prefix_schema:
+        output_storage_name = prefix_schema + "_" + output_storage_name
 
     result = {
         "rows": []
@@ -52,13 +56,21 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
         copy_result = copy.deepcopy(result)
         to_redshift(copy_result, all_batch_id, redshift_instance)
         print("Finished sent to Redshift " + report_name + " " + time_increment + " between " + start + " and " + end)
+
+    if azure_instance:  # Send to Azure
+        result["table_name"] = output_storage_name
+        copy_result = copy.deepcopy(result)
+        to_azure(copy_result, all_batch_id, azure_instance)
+        print("Finished sent to Azure " + report_name + " " + time_increment + " between " + start + " and " + end)
+
     if spreadsheet_id:  # Prepare to send to spreadsheet
         result["worksheet_name"] = output_storage_name
 
     return result
 
 
-def _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id, increment):
+def _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id, increment,
+                         azure_instance, prefix_schema):
     report_name = report.get("name")
 
     all_time_increment = report.get("config")["time_increment"]
@@ -66,7 +78,7 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
     for time_increment in all_time_increment:
         if time_increment == 'year':
             result = _get_one_segment(project, report, all_view_id, start, end, time_increment,
-                                      redshift_instance, spreadsheet_id)
+                                      redshift_instance, spreadsheet_id, azure_instance, prefix_schema)
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
@@ -75,7 +87,7 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
             i = 0
             for segment in segments:
                 segment_data = _get_one_segment(project, report, all_view_id, segment[0], segment[1], time_increment,
-                                                redshift_instance, spreadsheet_id)
+                                                redshift_instance, spreadsheet_id, azure_instance, prefix_schema)
                 if i == 0:  # Concatenate to send to spreadsheet
                     result = segment_data
                     i = i + 1
@@ -91,9 +103,21 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
     return all_result
 
 
-def get(project, test=False, start=None, end=None, all_view_id=None, spreadsheet_id=None, redshift_instance=None,
+def get(project,
+        test=False,
+        start=None,
+        end=None,
+        all_view_id=None,
+        spreadsheet_id=None,
+        redshift_instance=None,
+        azure_instance=None,
+        prefix_schema=None,
         increment=5):
     """
+    :param azure_instance:
+    :param prefix_schema:
+    :param increment:
+    :param project:
     :param test: if test = True --> other params are set up automatically
     :param start: "yyyy-mm-dd"
     :param end: "yyyy-mm-dd"
@@ -117,8 +141,8 @@ def get(project, test=False, start=None, end=None, all_view_id=None, spreadsheet
         }
         print("Loading report %s" % report_name)
         all_result = _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id,
-                                          increment)
+                                          increment, azure_instance, prefix_schema)
         print("Finish loading report %s" % report_name)
-        if spreadsheet_id is None and redshift_instance is None:
+        if spreadsheet_id is None and redshift_instance is None and azure_instance is None:
             print(all_result)
         time.sleep(5)
