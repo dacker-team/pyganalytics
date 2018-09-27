@@ -43,6 +43,13 @@ def get_data(project, view_id, start, end, metric, dimension, time_increment, me
     print(view_id)
     mapping_reverse = mapping_path(project)[1]
     dimension = copy.deepcopy(dimension)
+
+    for d in range(len(dimension)):
+        try:
+            dimension[d] = mapping_reverse[dimension[d]]
+        except KeyError:
+            pass
+
     try:
         dimension.append(mapping_reverse[time_increment])
     except KeyError:
