@@ -36,7 +36,7 @@ def set_date_range(start_date, end_date):
 
 
 def get_report(analytics, view_id, dimensions, metrics, start_date, end_date, sampling_level="LARGE",
-               metric_filter=None, dimension_filter=None, page_token=None):
+               metric_filter=None, dimension_filter=None, segments=None,page_token=None):
     """
     Use the Analytics Service Object to query the Analytics Reporting API V4.
     @analytics: result of initialize_api function
@@ -64,5 +64,7 @@ def get_report(analytics, view_id, dimensions, metrics, start_date, end_date, sa
         body["reportRequests"][0]["metricFilterClauses"] = metric_filter
     if dimension_filter:
         body["reportRequests"][0]["dimensionFilterClauses"] = dimension_filter
+    if segments:
+        body["reportRequests"][0]["segments"] = segments
     response = analytics.reports().batchGet(body=body).execute()
     return response

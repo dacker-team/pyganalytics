@@ -39,7 +39,7 @@ def treat_data(data, metric, dimension):
 
 
 def get_data(project, view_id, start, end, metric, dimension, time_increment, metric_filter=None,
-             dimension_filter=None):
+             dimension_filter=None, segment=None):
     print(view_id)
     mapping_reverse = mapping_path(project)[1]
     dimension = copy.deepcopy(dimension)
@@ -67,9 +67,11 @@ def get_data(project, view_id, start, end, metric, dimension, time_increment, me
                 "filters": dimension_filter
             }
         ]
+    if segment:
+        segment = [{"segmentId": segment}]
 
     response = get_report(analytics, view_id, dimension, metric, start, end, metric_filter=metric_filter,
-                          dimension_filter=dimension_filter)
+                          dimension_filter=dimension_filter, segments=segment)
 
     next_page_token = response['reports'][0].get("nextPageToken")
 
@@ -78,7 +80,7 @@ def get_data(project, view_id, start, end, metric, dimension, time_increment, me
 
     while next_page_token is not None:
         response = get_report(analytics, view_id, dimension, metric, start, end, metric_filter=metric_filter,
-                              dimension_filter=dimension_filter, page_token=next_page_token)
+                              dimension_filter=dimension_filter, segments=segment, page_token=next_page_token)
 
         next_page_token = response['reports'][0].get("nextPageToken")
 

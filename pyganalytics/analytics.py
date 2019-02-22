@@ -19,6 +19,7 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
     dimension = list(report_config["dimension"])
     metric_filter = report_config.get("metric_filter")
     dimension_filter = report_config.get("dimension_filter")
+    segment = report_config.get("segment")
     output_storage_name = "ga." + report_name + "_" + time_increment.replace(":", "_")
     if prefix_schema:
         output_storage_name = prefix_schema + "_" + output_storage_name
@@ -39,7 +40,8 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
             dimension,
             time_increment,
             metric_filter,
-            dimension_filter)
+            dimension_filter,
+            segment)
 
         view_result, view_all_batch_id = create_columns_rows(project, data, view_id, time_increment)
         if result.get("columns_name") is None or (len(view_result["columns_name"]) > len(result["columns_name"])):
