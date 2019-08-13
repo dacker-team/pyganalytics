@@ -10,7 +10,7 @@ except ImportError:  # for pip <= 9.0.3
 reqs = parse_requirements("requirements.txt", session='hack')
 reqs = [str(ir.req) for ir in reqs]
 
-with open('README.rst') as f:
+with open('README.md', 'r') as f:
     readme = f.read()
 
 with open('LICENSE') as f:
@@ -18,9 +18,10 @@ with open('LICENSE') as f:
 
 setup(
     name='pyganalytics',
-    version='0.0.27',
+    version='0.0.30',
     description='Easily get data from Google Analytics',
     long_description=readme,
+    long_description_content_type="text/markdown",
     author='Dacker',
     author_email='hello@dacker.co',
     url='https://github.com/dacker-team/pyganalytics',
