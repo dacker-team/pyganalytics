@@ -12,7 +12,7 @@ from .date import segment_month_date, segment_ndays_date
 
 
 def _get_one_segment(project, report, all_view_id, start, end, time_increment, redshift_instance, spreadsheet_id,
-                     azure_instance, prefix_schema):
+                     azure_instance, prefix_schema, existing_tunnel):
     report_name = report.get("name")
     report_config = report.get("config")
     metric = list(report_config["metric"])
@@ -56,7 +56,7 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
     if redshift_instance:  # Send to Redshift
         result["table_name"] = output_storage_name
         copy_result = copy.deepcopy(result)
-        to_redshift(copy_result, all_batch_id, redshift_instance)
+        to_redshift(copy_result, all_batch_id, redshift_instance, existing_tunnel=existing_tunnel)
         print("Finished sent to Redshift " + report_name + " " + time_increment + " between " + start + " and " + end)
 
     if azure_instance:  # Send to Azure
@@ -72,7 +72,7 @@ def _get_one_segment(project, report, all_view_id, start, end, time_increment, r
 
 
 def _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id, increment,
-                         azure_instance, prefix_schema):
+                         azure_instance, prefix_schema, existing_tunnel):
     report_name = report.get("name")
 
     all_time_increment = report.get("config")["time_increment"]
@@ -80,7 +80,8 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
     for time_increment in all_time_increment:
         if time_increment == 'year':
             result = _get_one_segment(project, report, all_view_id, start, end, time_increment,
-                                      redshift_instance, spreadsheet_id, azure_instance, prefix_schema)
+                                      redshift_instance, spreadsheet_id, azure_instance, prefix_schema,
+                                      existing_tunnel=existing_tunnel)
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
@@ -89,7 +90,8 @@ def _get_data_by_segment(project, start, end, report, all_view_id, redshift_inst
             i = 0
             for segment in segments:
                 segment_data = _get_one_segment(project, report, all_view_id, segment[0], segment[1], time_increment,
-                                                redshift_instance, spreadsheet_id, azure_instance, prefix_schema)
+                                                redshift_instance, spreadsheet_id, azure_instance, prefix_schema,
+                                                existing_tunnel=existing_tunnel)
                 if i == 0:  # Concatenate to send to spreadsheet
                     result = segment_data
                     i = i + 1
@@ -114,7 +116,8 @@ def get(project,
         redshift_instance=None,
         azure_instance=None,
         prefix_schema=None,
-        increment=5):
+        increment=5,
+        existing_tunnel=None):
     """
     :param azure_instance:
     :param prefix_schema:
@@ -126,6 +129,7 @@ def get(project,
     :param all_view_id: list of view_id, or "*" to catch data from all allowed views
     :param spreadsheet_id: id of Google Sheets to eventually send
     :param redshift_instance: redshift instance to eventually send (see pyred documentation)
+    :param existing_tunnel: true if ssh tunnel already opened
     :return: {
         "":
         "columns_name": []
@@ -143,7 +147,7 @@ def get(project,
         }
         print("Loading report %s" % report_name)
         all_result = _get_data_by_segment(project, start, end, report, all_view_id, redshift_instance, spreadsheet_id,
-                                          increment, azure_instance, prefix_schema)
+                                          increment, azure_instance, prefix_schema, existing_tunnel=existing_tunnel)
         print("Finish loading report %s" % report_name)
         if spreadsheet_id is None and redshift_instance is None and azure_instance is None:
             print(all_result)
