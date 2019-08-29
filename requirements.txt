@@ -11,7 +11,7 @@ pyred>=0.1.3
 pyspreadsheet>=0.0.15
 python-dateutil==2.7.2
 pytz==2018.3
-PyYAML==3.12
+PyYAML==5.1
 rsa==3.4.2
 six==1.11.0
 uritemplate==3.0.0
