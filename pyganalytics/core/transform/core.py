@@ -2,7 +2,7 @@ import copy
 
 from pyganalytics import MetaGoogleAnalytics
 from pyganalytics.core.extract.api import get_report
-from pyganalytics.core.extract import extract_api_data
+from pyganalytics.core.transform.extract import extract_api_data
 from pyganalytics.core.transform.path import mapping_path
 import hashlib
 from isoweek import Week
