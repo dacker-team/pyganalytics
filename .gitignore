@@ -7,3 +7,4 @@ pyganalytics.egg-info/
 sandbox.py
 sandbox.json
 metric_dimension.yaml
+client_secret.json

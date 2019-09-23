@@ -1,2 +1,1 @@
-from .analytics import get
-
+from pyganalytics.GoogleAnalytics import GoogleAnalytics

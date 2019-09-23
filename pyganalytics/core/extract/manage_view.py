@@ -1,8 +1,8 @@
-from . import init_connection
+from pyganalytics import init_connection
 
 
-def get_all_access_view(project, only_account=False):
-    analytics = init_connection.initialize_api(project, 'v3')
+def get_all_access_view(googleanalytics, only_account=False):
+    analytics = googleanalytics.googleauthentication.get_account("analytics", version="v3")
     accounts = analytics.management().accounts().list().execute()
     all_view = []
     if only_account:

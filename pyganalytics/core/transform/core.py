@@ -1,9 +1,9 @@
 import copy
 
-from pyganalytics.api import get_report
-from pyganalytics.extract import extract_api_data
-from pyganalytics.path import mapping_path
-from .init_connection import initialize_api
+from pyganalytics import MetaGoogleAnalytics
+from pyganalytics.core.extract.api import get_report
+from pyganalytics.core.extract import extract_api_data
+from pyganalytics.core.transform.path import mapping_path
 import hashlib
 from isoweek import Week
 
@@ -38,10 +38,10 @@ def treat_data(data, metric, dimension):
     return data
 
 
-def get_data(project, view_id, start, end, metric, dimension, time_increment, metric_filter=None,
+def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, dimension, time_increment, metric_filter=None,
              dimension_filter=None, segment=None):
     print(view_id)
-    mapping_reverse = mapping_path(project)[1]
+    mapping_reverse = mapping_path(googleanalytics)[1]
     dimension = copy.deepcopy(dimension)
 
     for d in range(len(dimension)):
@@ -54,7 +54,7 @@ def get_data(project, view_id, start, end, metric, dimension, time_increment, me
         dimension.append(mapping_reverse[time_increment])
     except KeyError:
         dimension.append(time_increment)
-    analytics = initialize_api(project)
+    analytics = googleanalytics.googleauthentication.get_account("analyticsreporting")
 
     if metric_filter is not None:
         metric_filter = [
@@ -89,8 +89,8 @@ def get_data(project, view_id, start, end, metric, dimension, time_increment, me
     return data
 
 
-def create_columns_rows(project, data, view_id, time_increment):
-    mapping = mapping_path(project)[0]
+def create_columns_rows(googleanalytics: MetaGoogleAnalytics, data, view_id, time_increment):
+    mapping = mapping_path(googleanalytics)[0]
     try:
         column_set = data[0].keys()
     except IndexError:
