@@ -1,5 +1,4 @@
 import copy
-
 from pyganalytics import MetaGoogleAnalytics
 from pyganalytics.core.extract.api import get_report
 from pyganalytics.core.transform.extract import extract_api_data
@@ -38,7 +37,8 @@ def treat_data(data, metric, dimension):
     return data
 
 
-def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, dimension, time_increment, metric_filter=None,
+def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, dimension, time_increment,
+             metric_filter=None,
              dimension_filter=None, segment=None):
     print(view_id)
     mapping_reverse = mapping_path(googleanalytics)[1]

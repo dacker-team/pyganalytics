@@ -1,5 +1,4 @@
 import datetime
-
 from pyganalytics.core.extract.manage_view import get_all_access_view
 
 
