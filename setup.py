@@ -18,10 +18,8 @@ setup(
     python_requires='>=3',
     install_requires=[
         "dbstream>=0.0.6",
-        "python-dateutil>=2.7.2",
         "PyYAML>=5.1",
         "isoweek>=1.3.3",
-        "isodate>=0.6.0",
         "googleauthentication>=0.0.7"
     ],
 )
