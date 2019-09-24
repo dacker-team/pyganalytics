@@ -17,8 +17,7 @@ def mapping_path(googleanalytics):
 
 def get_metric_dimension(googleanalytics):
     try:
-        return yaml.load(open(googleanalytics.metric_dimension_path))
+        return yaml.load(open(googleanalytics.metric_dimension_path), Loader=yaml.FullLoader)
     except Exception as e:
         print("Error with metric_dimension_file : %s" % str(e))
         exit()
-
