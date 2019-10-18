@@ -5,7 +5,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='pyganalytics',
-    version='0.1.13',
+    version='0.1.14',
     description='Easily get data from Google Analytics',
     long_description=readme,
     long_description_content_type="text/markdown",
@@ -17,7 +17,7 @@ setup(
     package_data={'': ["requirements.txt"]},
     python_requires='>=3',
     install_requires=[
-        "dbstream>=0.0.11",
+        "dbstream>=0.0.12",
         "PyYAML>=5.1",
         "isoweek>=1.3.3",
         "googleauthentication>=0.0.9"
