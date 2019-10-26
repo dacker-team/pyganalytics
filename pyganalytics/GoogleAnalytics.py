@@ -1,5 +1,8 @@
+import datetime
 import time
 import copy
+
+from dateutil.relativedelta import relativedelta, MO
 
 from pyganalytics.MetaGoogleAnalytics import MetaGoogleAnalytics
 from pyganalytics.core.load.to_database import send_to_db
@@ -64,6 +67,10 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
     for time_increment in all_time_increment:
         if time_increment == 'year':
             result = _get_one_segment(googleanalytics, report, all_view_id, start[:4] + "-01-01", end, time_increment, prefix_schema)
+        elif time_increment == "week":
+            week_start = datetime.datetime.strptime(start, "%Y-%m-%d") + relativedelta(weekday=MO(-1))
+            result = _get_one_segment(googleanalytics, report, all_view_id, week_start.strftime("%Y-%m-%d"), end, time_increment,
+                                      prefix_schema)
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
