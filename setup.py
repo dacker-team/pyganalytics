@@ -5,7 +5,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='pyganalytics',
-    version='0.1.16',
+    version='0.1.17',
     description='Easily get data from Google Analytics',
     long_description=readme,
     long_description_content_type="text/markdown",

@@ -61,15 +61,20 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
     return result
 
 
-def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, increment, prefix_schema):
+def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, increment, prefix_schema,
+                         force_time_increment):
     all_time_increment = report.get("config")["time_increment"]
+    if force_time_increment:
+        all_time_increment = [force_time_increment]
     all_result = []
     for time_increment in all_time_increment:
         if time_increment == 'year':
-            result = _get_one_segment(googleanalytics, report, all_view_id, start[:4] + "-01-01", end, time_increment, prefix_schema)
+            result = _get_one_segment(googleanalytics, report, all_view_id, start[:4] + "-01-01", end, time_increment,
+                                      prefix_schema)
         elif time_increment == "week":
             week_start = datetime.datetime.strptime(start, "%Y-%m-%d") + relativedelta(weekday=MO(-1))
-            result = _get_one_segment(googleanalytics, report, all_view_id, week_start.strftime("%Y-%m-%d"), end, time_increment,
+            result = _get_one_segment(googleanalytics, report, all_view_id, week_start.strftime("%Y-%m-%d"), end,
+                                      time_increment,
                                       prefix_schema)
         else:
             if time_increment == 'day':
@@ -98,24 +103,29 @@ class GoogleAnalytics(MetaGoogleAnalytics):
             all_view_id=None,
             prefix_schema=None,
             increment=5,
-            return_result=False):
+            return_result=False,
+            force_report=None,
+            force_time_increment=None):
         metric_dimension = get_metric_dimension(self)
         start, end = get_start_end(start, end)
         all_view_id = get_all_view_id(self, all_view_id)
-
-        for report_name in metric_dimension.keys():
+        all_reports = metric_dimension.keys()
+        if force_report:
+            all_reports = [force_report]
+        for report_name in all_reports:
             report = {
                 "name": report_name,
                 "config": metric_dimension[report_name]
             }
             print("Loading report %s" % report_name)
             all_result = _get_data_by_segment(self,
-                                              start,
-                                              end,
-                                              report,
-                                              all_view_id,
-                                              increment,
-                                              prefix_schema,
+                                              start=start,
+                                              end=end,
+                                              report=report,
+                                              all_view_id=all_view_id,
+                                              increment=increment,
+                                              prefix_schema=prefix_schema,
+                                              force_time_increment=force_time_increment
                                               )
             print("Finish loading report %s" % report_name)
             # time.sleep(5)
