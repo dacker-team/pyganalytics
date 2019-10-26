@@ -45,6 +45,30 @@ def segment_ndays_date(start, end, increment):
     return result
 
 
+def segment_week_date(start, end, increment):
+    """
+        start : YYYY-MM-DD
+        end : YYYY-MM-DD
+        """
+    """
+       start : YYYY-MM-DD
+       end : YYYY-MM-DD
+       """
+    start_datetime = string_to_date(start)
+    end_datetime = string_to_date(end)
+    result = []
+
+    start_datetime = start_datetime - timedelta(days=start_datetime.weekday())
+    end_datetime = end_datetime - timedelta(days=end_datetime.weekday()) + timedelta(days=6)
+
+    while start_datetime != end_datetime + timedelta(days=1) and start_datetime <= datetime.today():
+        inter = [date_to_string(start_datetime),
+                 date_to_string(start_datetime + timedelta(days=6))]
+        result.append(inter)
+        start_datetime = start_datetime + timedelta(days=7)
+    return result
+
+
 def add_a_month(date):
     try:
         next_month = date.replace(month=date.month + 1, day=1)

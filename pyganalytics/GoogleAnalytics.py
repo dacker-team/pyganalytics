@@ -9,7 +9,7 @@ from pyganalytics.core.load.to_database import send_to_db
 from pyganalytics.core.extract.config import get_start_end, get_all_view_id
 from pyganalytics.core.transform.path import get_metric_dimension
 from pyganalytics.core.transform.core import get_data, create_columns_rows
-from pyganalytics.core.extract.date import segment_month_date, segment_ndays_date
+from pyganalytics.core.extract.date import segment_month_date, segment_ndays_date, segment_week_date
 
 
 def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_increment, prefix_schema):
@@ -71,14 +71,12 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
         if time_increment == 'year':
             result = _get_one_segment(googleanalytics, report, all_view_id, start[:4] + "-01-01", end, time_increment,
                                       prefix_schema)
-        elif time_increment == "week":
-            week_start = datetime.datetime.strptime(start, "%Y-%m-%d") + relativedelta(weekday=MO(-1))
-            result = _get_one_segment(googleanalytics, report, all_view_id, week_start.strftime("%Y-%m-%d"), end,
-                                      time_increment,
-                                      prefix_schema)
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
+            elif time == "week":
+                week_start = datetime.datetime.strptime(start, "%Y-%m-%d") + relativedelta(weekday=MO(-1))
+                segments = segment_week_date(week_start.strftime("%Y-%m-%d"), end, increment)
             else:
                 segments = segment_month_date(start[:7] + "-01", end)
             i = 0
