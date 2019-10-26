@@ -74,7 +74,7 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
-            elif time == "week":
+            elif time_increment == "week":
                 week_start = datetime.datetime.strptime(start, "%Y-%m-%d") + relativedelta(weekday=MO(-1))
                 segments = segment_week_date(week_start.strftime("%Y-%m-%d"), end, increment)
             else:
