@@ -63,12 +63,12 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
     all_result = []
     for time_increment in all_time_increment:
         if time_increment == 'year':
-            result = _get_one_segment(googleanalytics, report, all_view_id, start, end, time_increment, prefix_schema)
+            result = _get_one_segment(googleanalytics, report, all_view_id, start[:4] + "-01-01", end, time_increment, prefix_schema)
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
             else:
-                segments = segment_month_date(start, end)
+                segments = segment_month_date(start[:7] + "-01", end)
             i = 0
             for segment in segments:
                 segment_data = _get_one_segment(googleanalytics, report, all_view_id, segment[0], segment[1],
