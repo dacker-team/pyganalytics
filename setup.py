@@ -17,9 +17,9 @@ setup(
     package_data={'': ["requirements.txt"]},
     python_requires='>=3',
     install_requires=[
-        "dbstream>=0.0.10",
+        "dbstream>=0.0.12",
         "PyYAML>=5.1",
         "isoweek>=1.3.3",
-        "googleauthentication>=0.0.8"
+        "googleauthentication>=0.0.10"
     ],
 )
