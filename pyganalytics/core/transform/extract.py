@@ -25,15 +25,12 @@ def extract_api_data(response):
         rows = response['reports'][0]['data']['rows']
     except:
         return []
-    try:
-        samples_read_counts = response['reports'][0]['data']['samplesReadCounts']
-        sampling_space_sizes = response['reports'][0]['data']['samplesReadCounts']
+    sampling = False
+    samples_read_counts = response['reports'][0]['data'].get('samplesReadCounts')
+    sampling_space_sizes = response['reports'][0]['data'].get('samplingSpaceSizes')
+    if samples_read_counts:
         print("SAMPLING")
-        print(samples_read_counts)
-        print(sampling_space_sizes)
-        exit()
-    except:
-        pass
+        sampling = True
 
     metric_response = get_metrics(response)
     dimensions_response = get_dimensions(response)
@@ -48,6 +45,7 @@ def extract_api_data(response):
         for i in metric_response:
             d[i] = row['metrics'][0]['values'][j]
             j = j + 1
+        d["sampling"] = sampling
 
         data.append(d)
     return data
