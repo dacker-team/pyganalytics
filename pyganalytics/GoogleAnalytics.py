@@ -20,7 +20,12 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
     metric_filter = report_config.get("metric_filter")
     dimension_filter = report_config.get("dimension_filter")
     segment = report_config.get("segment")
-    output_storage_name = def_table_name(prefix_schema, report_name, time_increment)
+    output_storage_name = def_table_name(
+        prefix_schema=prefix_schema,
+        report_name=report_name,
+        time_increment=time_increment,
+        googleanalytics=googleanalytics
+    )
 
     result = {
         "rows": []
@@ -66,7 +71,12 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
         all_time_increment = [force_time_increment]
     all_result = []
     for time_increment in all_time_increment:
-        table_name = def_table_name(prefix_schema=prefix_schema, report_name=report.get("name"), time_increment=time_increment)
+        table_name = def_table_name(
+            prefix_schema=prefix_schema,
+            report_name=report.get("name"),
+            time_increment=time_increment,
+            googleanalytics=googleanalytics
+        )
         start, end = get_start_end(start=start, end=end, table_name=table_name, dbstream=googleanalytics.dbstream)
 
         if time_increment == 'year':
