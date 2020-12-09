@@ -8,4 +8,6 @@ sandbox.py
 sandbox.json
 metric_dimension.yaml
 client_secret.json
+client.json
 deploy.sh
+*.log

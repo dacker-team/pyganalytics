@@ -5,7 +5,7 @@ import copy
 from dateutil.relativedelta import relativedelta, MO
 
 from pyganalytics.MetaGoogleAnalytics import MetaGoogleAnalytics
-from pyganalytics.core.load.to_database import send_to_db
+from pyganalytics.core.load.to_database import send_to_db, def_table_name
 from pyganalytics.core.extract.config import get_start_end, get_all_view_id
 from pyganalytics.core.transform.path import get_metric_dimension
 from pyganalytics.core.transform.core import get_data, create_columns_rows
@@ -20,9 +20,7 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
     metric_filter = report_config.get("metric_filter")
     dimension_filter = report_config.get("dimension_filter")
     segment = report_config.get("segment")
-    output_storage_name = "ga." + report_name + "_" + time_increment.replace(":", "_")
-    if prefix_schema:
-        output_storage_name = prefix_schema + "_" + output_storage_name
+    output_storage_name = def_table_name(prefix_schema, report_name, time_increment)
 
     result = {
         "rows": []
@@ -68,6 +66,9 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
         all_time_increment = [force_time_increment]
     all_result = []
     for time_increment in all_time_increment:
+        table_name = def_table_name(prefix_schema=prefix_schema, report_name=report.get("name"), time_increment=time_increment)
+        start, end = get_start_end(start=start, end=end, table_name=table_name, dbstream=googleanalytics.dbstream)
+
         if time_increment == 'year':
             result = _get_one_segment(googleanalytics, report, all_view_id, start[:4] + "-01-01", end, time_increment,
                                       prefix_schema)
@@ -94,7 +95,6 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
 
 
 class GoogleAnalytics(MetaGoogleAnalytics):
-
     def get(self,
             start=None,
             end=None,
@@ -105,7 +105,6 @@ class GoogleAnalytics(MetaGoogleAnalytics):
             force_report=None,
             force_time_increment=None):
         metric_dimension = get_metric_dimension(self)
-        start, end = get_start_end(start, end)
         all_view_id = get_all_view_id(self, all_view_id)
         all_reports = metric_dimension.keys()
         if force_report:

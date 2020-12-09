@@ -28,3 +28,10 @@ def send_to_db(dbstream: DBStream, data, all_batch_id):
                 "rows": small_rows
             }, replace=False)
             i = i + 50
+
+
+def def_table_name(prefix_schema, report_name, time_increment):
+    output_storage_name = "ga." + report_name + "_" + time_increment.replace(":", "_")
+    if prefix_schema:
+        output_storage_name = prefix_schema + "_" + output_storage_name
+    return output_storage_name
