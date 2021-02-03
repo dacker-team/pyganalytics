@@ -1,8 +1,10 @@
 import datetime
+import random
 import time
 import copy
 
 from dateutil.relativedelta import relativedelta, MO
+from googleapiclient.errors import HttpError
 
 from pyganalytics.MetaGoogleAnalytics import MetaGoogleAnalytics
 from pyganalytics.core.load.to_database import send_to_db, def_table_name
@@ -92,8 +94,14 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
                 segments = segment_month_date(start[:7] + "-01", end)
             i = 0
             for segment in segments:
-                segment_data = _get_one_segment(googleanalytics, report, all_view_id, segment[0], segment[1],
-                                                time_increment, prefix_schema)
+                for n in range(0, 5):
+                    try:
+                        segment_data = _get_one_segment(googleanalytics, report, all_view_id, segment[0], segment[1],
+                                                        time_increment, prefix_schema)
+                        break
+                    except HttpError as error:
+                        if error.resp.reason in ["internalServerError", "backendError"]:
+                            time.sleep((2 ** n) + random.random())
                 if i == 0:  # Concatenate to send to spreadsheet
                     result = segment_data
                     i = i + 1
