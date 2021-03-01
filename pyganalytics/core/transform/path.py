@@ -1,6 +1,5 @@
 import json
 import yaml
-from pyganalytics.mapping import mapping
 
 
 def mapping_path(googleanalytics):

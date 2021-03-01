@@ -35,8 +35,7 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
     all_batch_id = []
     print("Loading " + report_name + " " + time_increment + " between " + start + " and " + end)
     for view_id in all_view_id:
-
-        data = get_data(
+        data, types = get_data(
             googleanalytics,
             view_id,
             start,
@@ -47,10 +46,10 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
             metric_filter,
             dimension_filter,
             segment)
-
-        view_result, view_all_batch_id = create_columns_rows(googleanalytics, data, view_id, time_increment)
+        view_result, view_all_batch_id = create_columns_rows(data, view_id, time_increment, types)
         if result.get("columns_name") is None or (len(view_result["columns_name"]) > len(result["columns_name"])):
             result["columns_name"] = view_result["columns_name"]
+        result["types"] = view_result["types"]
         if len(view_result["rows"]) > 0 and len(view_result["rows"][0]) > 2:
             result["rows"] = result["rows"] + view_result["rows"]
         all_batch_id = all_batch_id + view_all_batch_id

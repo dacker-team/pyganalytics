@@ -21,6 +21,10 @@ def extract_api_data(response):
     """
     Extract all data from api response
     """
+    types = {}
+    for key in response['reports'][0]["columnHeader"]["metricHeader"]["metricHeaderEntries"]:
+        types[key["name"]] = key["type"]
+
     try:
         rows = response['reports'][0]['data']['rows']
     except:
@@ -48,4 +52,4 @@ def extract_api_data(response):
         d["sampling"] = sampling
 
         data.append(d)
-    return data
+    return data, types

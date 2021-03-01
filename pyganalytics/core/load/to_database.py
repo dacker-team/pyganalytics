@@ -2,6 +2,8 @@ import copy
 
 from dbstream import DBStream
 
+from pyganalytics.core.mapping_types import mapping_types
+
 
 def send_to_db(dbstream: DBStream, data, all_batch_id):
     all_batch_id = ["'" + e + "'" for e in all_batch_id]
@@ -13,6 +15,10 @@ def send_to_db(dbstream: DBStream, data, all_batch_id):
         except:
             print("Table does not exist")
     data["columns_name"] = [r.replace(":", "_").lower() for r in data["columns_name"]]
+    types = {}
+    for t in data["types"]:
+        types[t.replace(":", "_").lower()] = mapping_types[data["types"][t]]
+    data["types"] = types
     copy_data = copy.deepcopy(data)
     total_length = len(copy.deepcopy(data)["rows"])
     try:
@@ -25,7 +31,8 @@ def send_to_db(dbstream: DBStream, data, all_batch_id):
             dbstream.send_data({
                 "table_name": copy_data["table_name"],
                 "columns_name": copy_data["columns_name"],
-                "rows": small_rows
+                "rows": small_rows,
+                "types": copy_data["types"]
             }, replace=False)
             i = i + 50
 
