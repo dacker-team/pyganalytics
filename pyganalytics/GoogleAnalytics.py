@@ -101,6 +101,8 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
                     except HttpError as error:
                         if error.resp.reason in ["internalServerError", "backendError"]:
                             time.sleep((2 ** n) + random.random())
+                        else:
+                            raise error
                 if i == 0:  # Concatenate to send to spreadsheet
                     result = segment_data
                     i = i + 1
