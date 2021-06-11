@@ -87,16 +87,27 @@ def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, 
     return data, types
 
 
-def create_columns_rows(data, view_id, time_increment, types):
+def create_columns_rows(googleanalytics, data, view_id, time_increment, types):
+    mapping = mapping_path(googleanalytics)[0]
     try:
-        column_name = list(data[0].keys())
+        column_set = data[0].keys()
     except IndexError:
-        column_name = []
+        column_set = []
+    column_dict = {}
+    column_name = []
+    for c in column_set:
+        try:
+            column_dict[mapping[c]] = c
+            column_name.append(mapping[c])
+        except KeyError:
+            column_dict[c] = c
+            column_name.append(c)
+
     rows = []
     all_batch_id = []
     for element in data:
         row = []
-        batch_id = create_id(view_id, element[time_increment])
+        batch_id = create_id(view_id, column_dict[time_increment])
         for c in column_name:
             row.append(element[c])
 

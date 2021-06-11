@@ -46,7 +46,13 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
             metric_filter,
             dimension_filter,
             segment)
-        view_result, view_all_batch_id = create_columns_rows(data, view_id, time_increment, types)
+        view_result, view_all_batch_id = create_columns_rows(
+            googleanalytics=googleanalytics,
+            data=data,
+            view_id=view_id,
+            time_increment=time_increment,
+            types=types
+        )
         if result.get("columns_name") is None or (len(view_result["columns_name"]) > len(result["columns_name"])):
             result["columns_name"] = view_result["columns_name"]
         result["types"] = view_result["types"]
