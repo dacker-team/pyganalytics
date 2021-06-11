@@ -39,8 +39,19 @@ def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, 
              metric_filter=None,
              dimension_filter=None, segment=None):
     print(view_id)
+    mapping_reverse = mapping_path(googleanalytics)[1]
     dimension = copy.deepcopy(dimension)
-    dimension.append(time_increment)
+
+    for d in range(len(dimension)):
+        try:
+            dimension[d] = mapping_reverse[dimension[d]]
+        except KeyError:
+            pass
+
+    try:
+        dimension.append(mapping_reverse[time_increment])
+    except KeyError:
+        dimension.append(time_increment)
     analytics = googleanalytics.googleauthentication.get_account("analyticsreporting")
 
     if metric_filter is not None:
