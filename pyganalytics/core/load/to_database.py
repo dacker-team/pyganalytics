@@ -5,6 +5,7 @@ from dbstream import DBStream
 from pyganalytics.core.mapping_types import mapping_types
 
 
+
 def send_to_db(dbstream: DBStream, data, all_batch_id):
     all_batch_id = ["'" + e + "'" for e in all_batch_id]
     table_name = data["table_name"]
