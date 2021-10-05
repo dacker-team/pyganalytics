@@ -1,10 +1,8 @@
 import datetime
-import random
 import time
 import copy
 
 from dateutil.relativedelta import relativedelta, MO
-from googleapiclient.errors import HttpError
 
 from pyganalytics.MetaGoogleAnalytics import MetaGoogleAnalytics
 from pyganalytics.core.load.to_database import send_to_db, def_table_name
@@ -35,7 +33,8 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
     all_batch_id = []
     print("Loading " + report_name + " " + time_increment + " between " + start + " and " + end)
     for view_id in all_view_id:
-        data, types = get_data(
+
+        data = get_data(
             googleanalytics,
             view_id,
             start,
@@ -46,16 +45,10 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
             metric_filter,
             dimension_filter,
             segment)
-        view_result, view_all_batch_id = create_columns_rows(
-            googleanalytics=googleanalytics,
-            data=data,
-            view_id=view_id,
-            time_increment=time_increment,
-            types=types
-        )
+
+        view_result, view_all_batch_id = create_columns_rows(googleanalytics, data, view_id, time_increment)
         if result.get("columns_name") is None or (len(view_result["columns_name"]) > len(result["columns_name"])):
             result["columns_name"] = view_result["columns_name"]
-        result["types"] = view_result["types"]
         if len(view_result["rows"]) > 0 and len(view_result["rows"][0]) > 2:
             result["rows"] = result["rows"] + view_result["rows"]
         all_batch_id = all_batch_id + view_all_batch_id
@@ -92,23 +85,15 @@ def _get_data_by_segment(googleanalytics, start, end, report, all_view_id, incre
         else:
             if time_increment == 'day':
                 segments = segment_ndays_date(start, end, increment)
-            elif time_increment == "week":
+            elif time == "week":
                 week_start = datetime.datetime.strptime(start, "%Y-%m-%d") + relativedelta(weekday=MO(-1))
                 segments = segment_week_date(week_start.strftime("%Y-%m-%d"), end, increment)
             else:
                 segments = segment_month_date(start[:7] + "-01", end)
             i = 0
             for segment in segments:
-                for n in range(0, 5):
-                    try:
-                        segment_data = _get_one_segment(googleanalytics, report, all_view_id, segment[0], segment[1],
-                                                        time_increment, prefix_schema)
-                        break
-                    except HttpError as error:
-                        if error.resp.reason in ["internalServerError", "backendError"]:
-                            time.sleep((2 ** n) + random.random())
-                        else:
-                            raise error
+                segment_data = _get_one_segment(googleanalytics, report, all_view_id, segment[0], segment[1],
+                                                time_increment, prefix_schema)
                 if i == 0:  # Concatenate to send to spreadsheet
                     result = segment_data
                     i = i + 1
