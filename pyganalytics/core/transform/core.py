@@ -109,7 +109,7 @@ def create_columns_rows(googleanalytics, data, view_id, time_increment, types):
         row = []
         batch_id = create_id(view_id, column_dict[time_increment])
         for c in column_name:
-            row.append(column_dict[c])
+            row.append(element[column_dict[c]])
 
         row.append(view_id)
         row.append(batch_id)
