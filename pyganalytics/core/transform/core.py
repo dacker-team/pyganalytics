@@ -20,8 +20,6 @@ def treat_data(data, metric, dimension):
     -Date and metric format
     """
     for i in data:
-        for j in metric:
-            i[j] = float(i[j])
         for d in dimension:
             if d == "ga:yearMonth":
                 i["date"] = i[d][:4] + "-" + i[d][-2:] + "-01"
@@ -75,7 +73,7 @@ def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, 
 
     next_page_token = response['reports'][0].get("nextPageToken")
 
-    api_data = extract_api_data(response)
+    api_data, types = extract_api_data(response)
     data = treat_data(api_data, metric, dimension)
 
     while next_page_token is not None:
@@ -84,12 +82,12 @@ def get_data(googleanalytics: MetaGoogleAnalytics, view_id, start, end, metric, 
 
         next_page_token = response['reports'][0].get("nextPageToken")
 
-        api_data = extract_api_data(response)
+        api_data, types = extract_api_data(response)
         data = data + treat_data(api_data, metric, dimension)
-    return data
+    return data, types
 
 
-def create_columns_rows(googleanalytics: MetaGoogleAnalytics, data, view_id, time_increment):
+def create_columns_rows(googleanalytics, data, view_id, time_increment, types):
     mapping = mapping_path(googleanalytics)[0]
     try:
         column_set = data[0].keys()
@@ -104,12 +102,12 @@ def create_columns_rows(googleanalytics: MetaGoogleAnalytics, data, view_id, tim
         except KeyError:
             column_dict[c] = c
             column_name.append(c)
+
     rows = []
     all_batch_id = []
     for element in data:
         row = []
-        batch_id = create_id(view_id, element[column_dict[time_increment]])
-
+        batch_id = create_id(view_id, column_dict[time_increment])
         for c in column_name:
             row.append(element[column_dict[c]])
 
@@ -122,6 +120,7 @@ def create_columns_rows(googleanalytics: MetaGoogleAnalytics, data, view_id, tim
     column_name.append("batch_id")
     result = {
         "columns_name": column_name,
-        "rows": rows
+        "rows": rows,
+        "types": types
     }
     return result, all_batch_id
