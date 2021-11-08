@@ -12,6 +12,7 @@ from pyganalytics.core.extract.config import get_start_end, get_all_view_id
 from pyganalytics.core.transform.path import get_metric_dimension
 from pyganalytics.core.transform.core import get_data, create_columns_rows
 from pyganalytics.core.extract.date import segment_month_date, segment_ndays_date, segment_week_date
+from pyganalytics.mapping import mapping
 
 
 def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_increment, prefix_schema):
@@ -55,6 +56,9 @@ def _get_one_segment(googleanalytics, report, all_view_id, start, end, time_incr
         )
         if result.get("columns_name") is None or (len(view_result["columns_name"]) > len(result["columns_name"])):
             result["columns_name"] = view_result["columns_name"]
+        for r in view_result["types"].keys():
+            if r in mapping.keys():
+                view_result["types"][mapping[r]] = view_result["types"].pop(r)
         result["types"] = view_result["types"]
         if len(view_result["rows"]) > 0 and len(view_result["rows"][0]) > 2:
             result["rows"] = result["rows"] + view_result["rows"]
